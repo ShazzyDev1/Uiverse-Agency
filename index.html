@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Uiverse Agency - Crafting Digital Experiences</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Space+Grotesk:wght@400;500;700" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#BB86FC",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#121212",
+                        "surface-dark": "#1F1F1F",
+                        "on-background": "#E0E0E0",
+                        "on-surface": "#E0E0E0",
+                        "accent-dark": "#03DAC6",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        .text-primary-contrast {
+            color: #FFFFFF;
+        }
+        .dark .text-primary-contrast {
+            color: #000000;
+        }
+        body {
+            background-color: #121212;
+            color: #E0E0E0;
+        }
+        .dark {
+            background-color: #121212;
+            color: #E0E0E0;
+        }
+        .bg-background-light {
+            background-color: #121212;
+        }
+        .dark .bg-background-dark {
+            background-color: #121212;
+        }
+        .dark .bg-surface-dark {
+            background-color: #1F1F1F;
+        }
+        .dark .text-on-background {
+            color: #E0E0E0;
+        }
+        .dark .text-on-surface {
+            color: #E0E0E0;
+        }
+        .dark .border-dark-line {
+            border-color: #333333;
+        }
+        .dark .hover\:bg-surface-dark\/50:hover {
+            background-color: rgba(31, 31, 31, 0.5);
+        }
+    </style>
+</head>
+<!-- Starry Background -->
+<canvas id="starfield"></canvas>
+<script>
+  const canvas = document.getElementById("starfield");
+  const ctx = canvas.getContext("2d");
+  let stars = [];
+  let shootingStars = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  function createStars(count) {
+    stars = [];
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 1.5,
+        speed: Math.random() * 0.4 + 0.2,
+        alpha: Math.random(),
+        fade: Math.random() * 0.02 + 0.005,
+      });
+    }
+  }
+
+  function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw normal stars with twinkle
+    stars.forEach((star) => {
+      ctx.fillStyle = `rgba(255,255,255,${star.alpha})`;
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Falling motion
+      star.y += star.speed;
+      if (star.y > canvas.height) {
+        star.y = 0;
+        star.x = Math.random() * canvas.width;
+      }
+
+      // Twinkle effect
+      star.alpha += star.fade;
+      if (star.alpha <= 0 || star.alpha >= 1) star.fade *= -1;
+    });
+
+    // Draw shooting stars
+    shootingStars.forEach((s, i) => {
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(s.x, s.y);
+      ctx.lineTo(s.x - s.length * s.vx, s.y - s.length * s.vy);
+      ctx.stroke();
+
+      s.x += s.vx * 10;
+      s.y += s.vy * 10;
+      s.length -= 0.2;
+
+      if (s.length <= 0) shootingStars.splice(i, 1);
+    });
+
+    requestAnimationFrame(drawStars);
+  }
+
+  function spawnShootingStar() {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height * 0.5; // only from top half
+    shootingStars.push({
+      x,
+      y,
+      length: Math.random() * 80 + 50,
+      vx: -1,
+      vy: 1,
+    });
+  }
+
+  createStars(200);
+  drawStars();
+
+  // Shooting stars occasionally
+  setInterval(() => {
+    if (Math.random() > 0.7) spawnShootingStar();
+  }, 2000);
+
+  // Keep canvas behind everything
+  canvas.style.position = "fixed";
+  canvas.style.top = "0";
+  canvas.style.left = "0";
+  canvas.style.zIndex = "-1";
+  canvas.style.background = "black";
+</script>
+
+<body class="bg-background-dark font-display text-on-background">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<div class="flex h-full grow flex-col">
+<header class="w-full">
+  <div class="container mx-auto flex items-center justify-between px-8 py-6 lg:px-20" style="font-family: 'Space Grotesk', sans-serif;">
+    <div class="flex items-center gap-3 text-on-background">
+      <img src="assets/img/logo.png" alt="Uiverse Agency Logo" class="h-10 w-auto" />
+      <h2 class="text-2xl font-bold" style="font-family: 'Space Grotesk', sans-serif;">Uiverse Agency</h2>
+    </div>
+    <nav class="hidden items-center gap-10 md:flex" style="font-family: 'Space Grotesk', sans-serif; font-weight: 500;">
+      <a href="index.html" class="text-primary font-semibold" style="text-transform: capitalize;">Home</a>
+      <a href="services.html" class="hover:text-primary" style="text-transform: capitalize;">Services</a>
+      <a href="projects.html" class="hover:text-primary" style="text-transform: capitalize;">Projects</a>
+      <a href="skills.html" class="hover:text-primary" style="text-transform: capitalize;">Skills</a>
+      <a href="contact.html" class="hover:text-primary" style="text-transform: capitalize;">Contact Us</a>
+    </nav>
+    <button
+      class="hidden md:block rounded-full border border-primary px-6 py-2 font-bold text-primary hover:bg-primary hover:text-black"
+      style="font-family: 'Space Grotesk', sans-serif;"
+    >
+      Get a Quote
+    </button>
+  </div>
+</header>
+
+<main class="flex flex-1 flex-col">
+<section class="relative flex min-h-screen items-center justify-center overflow-hidden">
+<video autoplay="" class="absolute inset-0 h-full w-full object-cover" loop="" muted="" playsinline="">
+<source src="https://assets.mixkit.co/videos/preview/mixkit-circuit-board-with-chips-42584-large.mp4" type="video/mp4"/>
+              Your browser does not support the video tag.
+            </video>
+<div class="absolute inset-0 bg-black/60"></div>
+<div class="relative z-10 flex flex-col items-center justify-center p-8 text-center lg:p-20">
+<div class="max-w-5xl space-y-8">
+<h1 class="text-6xl font-bold tracking-tight text-on-background lg:text-8xl">Crafting Dynamic Digital Experiences</h1>
+<p class="text-lg font-light text-on-background/80 lg:text-xl">
+                We blend creativity with technology to build immersive and impactful digital solutions
+                that stand out.
+              </p>
+<a href="projects.html">
+  <button class="mt-8 rounded-full bg-primary px-8 py-4 text-lg font-bold text-primary-contrast transition-transform hover:scale-105">
+    Explore Our Work
+  </button>
+</a>
+
+</div>
+</div>
+</section>
+<section class="py-24 lg:py-32">
+<div class="container mx-auto px-8 lg:px-20">
+<div class="mb-16 text-center">
+<h2 class="text-5xl font-bold text-on-background lg:text-6xl">Our Services</h2>
+<p class="mt-6 text-xl text-on-background/70">A complete suite of services to build your online presence.</p>
+</div>
+<div class="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-3">
+<div class="group rounded-3xl bg-surface-dark p-10 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-surface-dark/80">
+<div class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-4xl">
+                design_services
+              </span>
+</div>
+<h3 class="text-2xl font-bold text-on-surface">Web Design</h3>
+<p class="mt-4 text-base text-on-surface/70">Visually stunning and user-friendly websites.</p>
+</div>
+<div class="group rounded-3xl bg-surface-dark p-10 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-surface-dark/80">
+<div class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-4xl">
+                code
+              </span>
+</div>
+<h3 class="text-2xl font-bold text-on-surface">Web Development</h3>
+<p class="mt-4 text-base text-on-surface/70">Robust and scalable web applications.</p>
+</div>
+<div class="group rounded-3xl bg-surface-dark p-10 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-surface-dark/80">
+<div class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-4xl">
+                search
+              </span>
+</div>
+<h3 class="text-2xl font-bold text-on-surface">SEO Optimization</h3>
+<p class="mt-4 text-base text-on-surface/70">Enhancing your website's visibility and ranking.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="bg-surface-dark py-24 lg:py-32">
+<div class="container mx-auto px-8 lg:px-20">
+<div class="mb-16 text-center">
+<h2 class="text-5xl font-bold text-on-background lg:text-6xl">What Our Clients Say</h2>
+<p class="mt-6 text-xl text-on-background/70">Trusted by leading brands and startups.</p>
+</div>
+<div class="relative">
+<div class="grid grid-cols-1 gap-10 lg:grid-cols-3">
+<div class="rounded-3xl bg-background-dark p-10 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-background-dark/80">
+<div class="mb-6 flex items-center gap-5">
+<img alt="Client Logo" class="h-16 w-16 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKuhodU0LpUEr2YkZy7HFfr1eYNXhrhEZUAsB7On-9wYQJrdbeQ14N9l87ymXnFvqp5phKOTqUJPeHlraw84MO1ZiW9RNdjz4frcd_atMUarO6M0IipQ8w3Lr8B_-l5BAa9clwuAqW4ubEXEdmKxfbvVEphR47FEjDp9aJFCBb9BWfxGnoeYywutYYDq17n5T40P-rBp92Daq47fwydMnhdKWIUS27calNdDThqM6UMMlC5an4SjdwTz_vKen6hB2XNo6Qtdl3Yog"/>
+<div>
+<p class="text-xl font-bold text-on-surface">Sarah Johnson</p>
+<p class="text-base text-on-surface/60">CEO, InnovateTech</p>
+</div>
+</div>
+<p class="text-lg text-on-surface/80">"Uiverse Agency transformed our online presence. Their expertise resulted in a website that is not only beautiful but also highly functional. We've seen a significant increase in engagement."</p>
+</div>
+<div class="rounded-3xl bg-background-dark p-10 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-background-dark/80">
+<div class="mb-6 flex items-center gap-5">
+<img alt="Client Logo" class="h-16 w-16 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCx1V73vd750M-s8XQT7zaP1et1cFyJBtiWNR0jv9aqQxgXzELmR-3k18mAH_cIdoSCgmVTRVSIx_1OTEWPN0ZJzjNndgk0KjdVoWG5g8RDCrQY8iAWpbaNffBV3HGuK_1wI-A34R4ZdzJqIavKYWe_Egkak9htqg__5hTQ_ARLdXU4WK2vjFEwckHlCmILeXGX2L5MUVCjYOWV0Xp8Xs2eqBGaz0hePMulJuFDchS6dfSQ4TJlGYx7DxWG-8J4ONNIx0Ka54dt6tE"/>
+<div>
+<p class="text-xl font-bold text-on-surface">Mark Lee</p>
+<p class="text-base text-on-surface/60">Marketing Director, FinCorp</p>
+</div>
+</div>
+<p class="text-lg text-on-surface/80">"The team at Uiverse is exceptional. They took the time to understand our needs and delivered a product that exceeded our expectations. Their attention to detail and commitment to quality is evident."</p>
+</div>
+<div class="rounded-3xl bg-background-dark p-10 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-background-dark/80">
+<div class="mb-6 flex items-center gap-5">
+<img alt="Client Logo" class="h-16 w-16 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARXkezUDHDzGOAfKVNep2U5uXEK4IquyY5eIvw4Z9BO4QW6sXXardgQ4tp2aY6Q5i1sMm4S0do2RgEPvqWIi6urHXN-53grmtP1IDkEmfs1wX2BoQW0_ueUSUJKm06vpN7rfV2qnHSq8Z2a_44JZRmMSjZih3G1QqvyDqpppUHsETQvBXwLL77aId3wtu7-h8jtPibaEvutZ3WNrJ-DkMvaldcYXG9NSIBri-8UFY_AfPx3b9ztMVfjWFonSkwl9z66LOx-51rBDU"/>
+<div>
+<p class="text-xl font-bold text-on-surface">Emily Chen</p>
+<p class="text-base text-on-surface/60">Founder, Creative Minds</p>
+</div>
+</div>
+<p class="text-lg text-on-surface/80">"Working with Uiverse Agency was a pleasure. Their creativity and technical skills are top-notch. They delivered a stunning portfolio website that perfectly showcases our work and has helped us attract new clients."</p>
+</div>
+</div>
+</div>
+</div></section>
+<section class="py-24 lg:py-32">
+  <div class="container mx-auto px-8 lg:px-20">
+    <div class="mb-16 text-center">
+      <h2 class="text-5xl font-bold text-on-background lg:text-6xl">Featured Projects</h2>
+      <p class="mt-6 text-xl text-on-background/70">
+        A glimpse into our portfolio of successful projects.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
+
+      
+      <a href="https://ai-agent-xi-ivory.vercel.app/" target="_blank" rel="noopener noreferrer"
+         class="group overflow-hidden rounded-3xl bg-surface-dark shadow-lg transition-all duration-300 hover:scale-105 hover:bg-surface-dark/80 block">
+        <div class="h-64 w-full bg-cover bg-center" style="background-image: url('assets/img/project2.png');"></div>
+        <div class="p-8">
+          <h3 class="text-2xl font-bold text-on-surface">Innovative Ai Solutions for Tech Startups</h3>
+          <p class="mt-3 text-base text-on-surface/70">
+            A cutting-edge platform focusing on user experience and scalability.
+          </p>
+          <span class="mt-4 inline-block text-primary font-semibold" href="">View Project →</span>
+        </div>
+      </a>
+
+      <a href="https://kaira-store-eight.vercel.app/" target="_blank" rel="noopener noreferrer"
+         class="group overflow-hidden rounded-3xl bg-surface-dark shadow-lg transition-all duration-300 hover:scale-105 hover:bg-surface-dark/80 block">
+        <div class="h-64 w-full bg-cover bg-center" style="background-image: url('assets/img/project3.png');"></div>
+        <div class="p-8">
+          <h3 class="text-2xl font-bold text-on-surface">Kaira E-commerce Platform for Retail</h3>
+          <p class="mt-3 text-base text-on-surface/70">
+            A seamless e-commerce experience with advanced features.
+          </p>
+          <span class="mt-4 inline-block text-primary font-semibold">View Project →</span>
+        </div>
+      </a>
+
+      <a href="https://proman-protofolio.vercel.app/" target="_blank" rel="noopener noreferrer"
+         class="group overflow-hidden rounded-3xl bg-surface-dark shadow-lg transition-all duration-300 hover:scale-105 hover:bg-surface-dark/80 block">
+        <div class="h-64 w-full bg-cover bg-center" style="background-image: url('assets/img/project4.jpg');"></div>
+        <div class="p-8">
+          <h3 class="text-2xl font-bold text-on-surface">Proman Portfolio for Creatives</h3>
+          <p class="mt-3 text-base text-on-surface/70">
+            A visually appealing showcase for creative professionals.
+          </p>
+          <span class="mt-4 inline-block text-primary font-semibold">View Project →</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<section class="py-24 lg:py-32">
+<div class="container mx-auto px-8 text-center lg:px-20">
+<h2 class="text-5xl font-bold text-on-background lg:text-6xl">Ready to Elevate Your Online Presence?</h2>
+<p class="mx-auto mt-6 max-w-4xl text-xl text-on-background/70">Contact us today to discuss your project and discover how we can help you achieve your business goals.</p>
+<button class="mt-12 rounded-full bg-primary px-8 py-4 text-lg font-bold text-primary-contrast transition-transform hover:scale-105">
+              Get a Quote
+            </button>
+</div>
+</section>
+</main>
+<footer class="border-t border-dark-line py-12">
+<div class="container mx-auto px-8 lg:px-20">
+<div class="flex flex-col items-center justify-between gap-8 md:flex-row">
+<div class="flex flex-wrap justify-center gap-x-10 gap-y-4 text-lg">
+<a class="text-on-background/70 hover:text-primary" href="#">About Us</a>
+<a class="text-on-background/70 hover:text-primary" href="Services.html">Services</a>
+<a class="text-on-background/70 hover:text-primary" href="protofolio.html">Portfolio</a>
+<a class="text-on-background/70 hover:text-primary" href="contact.html">Contact Us</a>
+</div>
+<div class="flex justify-center gap-6">
+<a class="text-on-background/60 hover:text-primary" href="#">
+<svg fill="currentColor" height="28" viewBox="0 0 256 256" width="28" xmlns="http://www.w3.org/2000/svg"><path d="M247.39,68.94A8,8,0,0,0,240,64H209.57A48.66,48.66,0,0,0,168.1,40a46.91,46.91,0,0,0-33.75,13.7A47.9,47.9,0,0,0,120,88v6.09C79.74,83.47,46.81,50.72,46.46,50.37a8,8,0,0,0-13.65,4.92c-4.31,47.79,9.57,79.77,22,98.18a110.93,110.93,0,0,0,21.88,24.2c-15.23,17.53-39.21,26.74-39.47,26.84a8,8,0,0,0-3.85,11.93c.75,1.12,3.75,5.05,11.08,8.72C53.51,229.7,65.48,232,80,232c70.67,0,129.72-54.42,135.75-124.44l29.91-29.9A8,8,0,0,0,247.39,68.94Zm-45,29.41a8,8,0,0,0-2.32,5.14C196,166.58,143.28,216,80,216c-10.56,0-18-1.4-23.22-3.08,11.51-6.25,27.56-17,37.88-32.48A8,8,0,0,0,92,169.08c-.47-.27-43.91-26.34-44-96,16,13,45.25,33.17,78.67,38.79A8,8,0,0,0,136,104V88a32,32,0,0,1,9.6-22.92A30.94,30.94,0,0,1,167.9,56c12.66.16,24.49,7.88,29.44,19.21A8,8,0,0,0,204.67,80h16Z"></path></svg>
+</a>
+<a class="text-on-background/60 hover:text-primary" href="https://www.instagram.com/team.uiverse?igsh=MTRmenVsNTRmaTFmeg==">
+<svg fill="currentColor" height="28" viewBox="0 0 256 256" width="28" xmlns="http://www.w3.org/2000/svg"><path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160ZM176,24H80A56.06,56.06,0,0,0,24,80v96a56.06,56.06,0,0,0,56,56h96a56.06,56.06,0,0,0,56-56V80A56.06,56.06,0,0,0,176,24Zm40,152a40,40,0,0,1-40,40H80a40,40,0,0,1-40-40V80A40,40,0,0,1,80,40h96a40,40,0,0,1,40,40ZM192,76a12,12,0,1,1-12-12A12,12,0,0,1,192,76Z"></path></svg>
+</a>
+<a class="text-on-background/60 hover:text-primary" href="#">
+<svg fill="currentColor" height="28" viewBox="0 0 256 256" width="28" xmlns="http://www.w3.org/2000/svg"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm8,191.63V152h24a8,8,0,0,0,0-16H136V112a16,16,0,0,1,16-16h16a8,8,0,0,0,0-16H152a32,32,0,0,0-32,32v24H96a8,8,0,0,0,0,16h24v63.63a88,88,0,1,1,16,0Z"></path></svg>
+</a>
+</div>
+</div>
+<div class="mt-8 border-t border-dark-line pt-8 text-center text-base text-on-background/60">
+<p>© 2024 Uiverse Agency. All rights reserved.</p>
+</div>
+</div>
+</footer>
+</div>
+</div>
+</body>
+</html>
